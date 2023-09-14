@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "mic-racoon-challange"
+version = "0.1.0"
+description = ""
+authors = ["Rajesh Baidya <abhi.crushefix@gmail.com>"]
+readme = "README.md"
+packages = [{include = "mic_racoon_challange"}]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+fastapi = "^0.103.1"
+uvicorn = "^0.23.2"
+python-multipart = "^0.0.6"
+pydicom = "^2.4.3"
+numpy = "^1.25.2"
+python-dotenv = "^1.0.0"
+matplotlib = "^3.7.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

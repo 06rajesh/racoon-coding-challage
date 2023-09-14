@@ -1,0 +1,9 @@
+services:
+  web:
+    build: .
+    ports:
+      - "5000:8000"
+    volumes:
+      - ./uploads:/app/uploads
+    environment:
+      - DICOM_THRESHOLD=0.2
