@@ -33,7 +33,7 @@ This web-based platform allows users to upload DICOM images and perform pixel da
 3. Start the image using docker compose `docker compose up -d`
 4. Access the application in a web browser at `http://localhost:5000` as in docker-compose file specified port is `5000`. You can change it to some other port if this port is not free in your machine.
 ### Setting up the Environment Variables
-This project supports setting up the threshold environment variable `DICOM_THRESHOLD`. Default value for this variable is `5.0`.
+This project supports setting up the threshold environment variable `DICOM_THRESHOLD`. Default value for this variable is set to `0.5`.
 1. If you are running this project using python copy the `.env.sample` file to `.env` and set the variable in that file.
 2. If you are running using docker compose, then set the environment variable in docker-compose file.
 
