@@ -7,7 +7,8 @@
             </div>
         </article>
         <div class="upload-list" v-for="(item, idx) in upload_list" :key="item.name + '_' + idx">
-            <UploadFileItem :upload_file="item" :submitted="submitted" :success="file_status[idx]"/>
+            <UploadFileItem :upload_file="item" :submitted="submitted" :success="file_status[idx].status == 'success'"
+                :volume="file_status[idx].volume" />
         </div>
         <div class="grid">
             <button :disabled="upload_list.length == 0" class="warning" @click="clearUploadList">
@@ -16,7 +17,7 @@
             <button :disabled="upload_list.length == 0" @click="handleUploadButton">
                 <i class="fa-solid fa-upload"></i> Upload
             </button>
-        </div>        
+        </div>
     </div>
 </template>
 
@@ -28,8 +29,20 @@ import UploadFileItem from '@/components/UploadFileItem.vue';
 
 const FileUpload = defineAsyncComponent(() => import('../components/FileUpload.vue'))
 
+type FleUploadResponse = {
+    filename: string
+    volume: number
+    status: string
+}
+
+const empty_output: FleUploadResponse = {
+    filename: '',
+    volume: -1,
+    status: 'failed'
+}
+
 var upload_list: File[] = reactive([])
-var file_status: boolean[] = reactive([])
+var file_status: FleUploadResponse[] = reactive([])
 var submitted = ref(false)
 
 const http = axios.create({
@@ -38,14 +51,13 @@ const http = axios.create({
     }
 });
 
-
 onMounted(() => {
     http.get("/api")
         .then((resp) => console.log("Connection to API established"))
         .catch((e) => console.log("Could not fetch the Request."))
 })
 
-function uploadFileToApi(file: File): Promise<boolean> {
+function uploadFileToApi(file: File): Promise<FleUploadResponse> {
     return new Promise((resolve, reject) => {
         var formData = new FormData();
         formData.append("file", file);
@@ -59,20 +71,22 @@ function uploadFileToApi(file: File): Promise<boolean> {
                 }
             })
             .then((resp) => {
-                if ((resp.data) && (resp.data.status == 'success')){
-                    resolve(true)
+                if (resp.data) {
+                    let output: FleUploadResponse = resp.data as FleUploadResponse
+                    resolve(output)
                 }
-                resolve(false)
+
+                resolve(empty_output)
             })
             .catch((e) => {
                 reject(e)
             })
     })
-    
+
 }
 
-async function handleUploadButton(){
-    for(let i=0; i<upload_list.length; i++){
+async function handleUploadButton() {
+    for (let i = 0; i < upload_list.length; i++) {
         var resp = await uploadFileToApi(upload_list[i])
         file_status[i] = resp
     }
@@ -88,7 +102,7 @@ function clearUploadList() {
 function startFileUpload(files: File[]) {
     upload_list.push.apply(upload_list, files)
     files.forEach((f) => {
-        file_status.push(false)
+        file_status.push(empty_output)
     })
 }
 </script>

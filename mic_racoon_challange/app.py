@@ -37,11 +37,12 @@ async def get_all_dicoms():
     all_dicoms = []
     for f in files:
         dicom_file = f'/{dicoms_dir}/{str(f)}'
-        types, filename = get_dicom_details('.' + dicom_file)
+        types, filename, volume = get_dicom_details('.' + dicom_file)
         item = {
             'name': filename,
             'imageTypes': types,
             'file': dicom_file,
+            'volume': volume,
             'image': f'/{png_dir}/{get_file_name(f)}.png'
         }
 
@@ -53,7 +54,11 @@ async def get_all_dicoms():
 @app.post("/api/upload/")
 async def create_upload_file(file: Annotated[UploadFile, File()]):
     if file.content_type != 'application/dicom':
-        return HTTPException(status_code=400, detail="File Type not Supported")
+        return {
+            "filename": "",
+            "volume": -1,
+            "status": "failed",
+        }
 
     threshold = float(os.environ.get('DICOM_THRESHOLD', 0.5))
 
@@ -64,10 +69,11 @@ async def create_upload_file(file: Annotated[UploadFile, File()]):
     ensure_dir(str(raw_dir))
 
     dicom_path = save_file_to_dir(str(raw_dir), file)
-    process_dicom(dicom_path, output_dir=str(processed_dir), threshold_val=threshold)
+    volume = process_dicom(dicom_path, output_dir=str(processed_dir), threshold_val=threshold)
 
     return {
         "filename": file.filename,
+        "volume": volume,
         "status": "success",
     }
 

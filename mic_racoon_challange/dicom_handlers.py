@@ -12,8 +12,8 @@ def normalize_np_arr(x: np.array):
 
 
 def threshold_np_arr(x: np.array, threshold_val: float = 0.5):
-    x[x < threshold_val] = 0
-    x[x >= threshold_val] = 1
+    x[x <= threshold_val] = 0
+    x[x > threshold_val] = 1
     return x.astype('uint16')
 
 
@@ -26,12 +26,23 @@ def get_dicom_details(dicom_path: str):
     medical_image = pydicom.dcmread(dicom_path)
     types = ', '.join(medical_image.ImageType)
     filename = Path(medical_image.filename).stem
-    print(filename)
-    return types, filename
+    volume = calculate_dicom_volume(medical_image)
+    return types, filename, volume
 
 
-def process_dicom(dicom_path: str, output_dir: str, threshold_val: float = 0.5):
-    medical_image = pydicom.read_file(dicom_path)
+def calculate_dicom_volume(dicom: pydicom.FileDataset) -> float:
+    if not hasattr(dicom, "PixelSpacing"):
+        return 0.000
+    pixel_spacing = dicom.PixelSpacing
+    slice_thickness = dicom.SliceThickness
+    n_pixels = np.count_nonzero(dicom.pixel_array)
+    vol_mm3 = pixel_spacing[0] * pixel_spacing[1] * slice_thickness * n_pixels
+    return round(vol_mm3, 3)
+
+
+def process_dicom(dicom_path: str, output_dir: str, threshold_val: float = 0.5) -> float:
+    medical_image = pydicom.dcmread(dicom_path)
+
     img_arr = normalize_np_arr(medical_image.pixel_array)
     img_arr = threshold_np_arr(img_arr, threshold_val)
 
@@ -43,6 +54,7 @@ def process_dicom(dicom_path: str, output_dir: str, threshold_val: float = 0.5):
 
     np_to_png(img_arr, str(png_export_path), filename)
     medical_image.PixelData = img_arr.tobytes()
+    vol = calculate_dicom_volume(medical_image)
     medical_image.save_as(dicom_export_path / f'{filename}.dcm')
 
-    return
+    return vol

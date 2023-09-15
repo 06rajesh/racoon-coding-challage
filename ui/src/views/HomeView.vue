@@ -10,6 +10,7 @@
         <div class="content">
           <h4>{{ d.name }}</h4>
           <h6>Available Image types: {{ d.imageTypes }}</h6>
+          <h6 v-if="d.volume > 0">Volume: {{ d.volume }} mm<sup>3</sup></h6>
           <a :href="d.file" :download="d.name + '.dcm'" role="button">
               Download
           </a>
@@ -36,6 +37,7 @@ type DicomsResponse  = {
   name: string
   imageTypes: string
   image: string
+  volume: number
 }
 
 let all_dicoms = ref<DicomsResponse[]>([])
@@ -44,7 +46,6 @@ let all_dicoms = ref<DicomsResponse[]>([])
 onMounted(() => {
     http.get("/api/dicoms/all")
         .then((resp) => {
-          console.log(resp.data)
           all_dicoms.value = resp.data.dicoms as DicomsResponse[]
         })
         .catch((e) => console.log("Could not fetch the Request."))
