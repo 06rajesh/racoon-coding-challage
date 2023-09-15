@@ -2,8 +2,11 @@
     <div class="grid">
         <hgroup>
             <h3>{{ upload_file.name }}</h3>
-            <h4 v-if="volume > 0">{{ check_volume(volume) }}  mm<sup>3</sup></h4>
-            <h4 v-else class="red">{{ check_volume(volume) }}</h4>
+            <div v-if="submitted">
+                <h4 v-if="volume > 0">{{ check_volume(volume) }}  mm<sup>3</sup></h4>
+                <h4 v-else class="red">{{ check_volume(volume) }}</h4>
+            </div>
+            <div v-else><h4>{{ upload_file.type }}</h4></div>            
         </hgroup>
         <div v-if="submitted" :class="success ? 'status green' : 'status red'">
             <i :class="success ? 'fa-solid fa-check' : 'fa-solid fa-x'"></i>
