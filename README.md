@@ -29,7 +29,7 @@ This web-based platform allows users to upload DICOM images and perform pixel da
 3. Access the application in a web browser at `http://localhost:8080` and upload a DICOM image for volume calculation.
 ### Run Using docker compose
 1. Build the Docker image: `docker build -t mic-racoon-challange .`
-2. Create a `uploads` directory if not present in the same directory, as this upload directory will be mounted for investigating the uploaded DICOM files. `mkdir uploads`
+2. Create a `uploads` directory if not present in the same directory, as this upload directory will be mounted with the docker container's uploads directory for investigating the uploaded DICOM files. `mkdir uploads`
 3. Start the image using docker compose `docker compose up -d`
 4. Access the application in a web browser at `http://localhost:5000` as in docker-compose file specified port is `5000`. You can change it to some other port if this port is not free in your machine.
 ### Setting up the Environment Variables
