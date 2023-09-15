@@ -6,4 +6,4 @@ services:
     volumes:
       - ./uploads:/app/uploads
     environment:
-      - DICOM_THRESHOLD=0.2
+      - DICOM_THRESHOLD=0.5
