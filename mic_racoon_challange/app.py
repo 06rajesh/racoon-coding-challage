@@ -20,11 +20,13 @@ app.mount("/assets", StaticFiles(directory="dist/assets"), name="assets")
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
 
+# Endpoint to provide a basic API status
 @app.get("/api")
 async def api():
     return {"status": "success"}
 
 
+# Endpoint to get details of all processed DICOMs
 @app.get("/api/dicoms/all")
 async def get_all_dicoms():
     processed_dir = Path(UPLOAD_DIR, 'processed')
@@ -51,6 +53,7 @@ async def get_all_dicoms():
     return {"dicoms": all_dicoms}
 
 
+# Endpoint to handle DICOM file uploads and processing
 @app.post("/api/upload/")
 async def create_upload_file(file: Annotated[UploadFile, File()]):
     if file.content_type != 'application/dicom':
@@ -78,11 +81,13 @@ async def create_upload_file(file: Annotated[UploadFile, File()]):
     }
 
 
+# Endpoint to handle 404 errors
 @app.get("/api/{full_path:path}")
 async def not_found():
     return {"error": "not found"}
 
 
+# Endpoint to serve the frontend index.html file
 @app.get('/{full_path:path}')
 async def index():
     return FileResponse('dist/index.html')
