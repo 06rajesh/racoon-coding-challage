@@ -37,6 +37,9 @@ This project supports setting up the threshold environment variable `DICOM_THRES
 1. If you are running this project using python copy the `.env.sample` file to `.env` and set the variable in that file.
 2. If you are running using docker compose, then set the environment variable in docker-compose file.
 
+## Running the Tests
+1. If you are using `poetry` to run this project you can easily run the tests just by using this command: `poetry run pytests`
+
 ## Future Works
 1. Drag and Drop in web UI does not work all the time. Some time there is no file registered with the Vue drag event. I would suggest use it by clicking the zone and upload files from the pop-up. This issue should be fixed in near future.
 2. Response types should be generated using Swagger and that response type should be using in both backend and frontend.
